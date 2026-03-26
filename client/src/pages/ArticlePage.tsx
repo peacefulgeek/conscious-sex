@@ -1,11 +1,14 @@
 /*
- * ArticlePage: Warm, immersive article reading experience
- * Full-bleed hero, elegant typography, sidebar, FAQ, share
+ * ArticlePage — Render Template Archetype A
+ * SINGLE COLUMN. Max-width 720px centered.
+ * Hero full-bleed above title. NO sidebar. NO Table of Contents.
+ * Author bio INLINE at bottom. Cross-links: title-only.
+ * Share buttons: bottom on mobile, floating left on desktop.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "wouter";
-import { Clock, Copy, Check, ChevronDown, ChevronUp, ArrowRight, Flame } from "lucide-react";
-import { getArticleMetaBySlug, getRelatedArticles, getArticlesByCategory, filterPublished, loadArticleContent, SITE_CONFIG, type ArticleMeta } from "@/data";
+import { Clock, Copy, Check, ArrowRight } from "lucide-react";
+import { getArticleMetaBySlug, getArticlesByCategory, filterPublished, loadArticleContent, SITE_CONFIG, type ArticleMeta } from "@/data";
 import EmailCapture from "@/components/EmailCapture";
 
 function JsonLd({ article, faqHtml }: { article: ArticleMeta; faqHtml: string }) {
@@ -17,7 +20,7 @@ function JsonLd({ article, faqHtml }: { article: ArticleMeta; faqHtml: string })
     image: article.heroImage,
     datePublished: article.dateISO,
     dateModified: article.dateISO,
-    author: { "@type": "Person", name: "Krishna" },
+    author: { "@type": "Person", name: "Kalesh" },
     publisher: {
       "@type": "Organization",
       name: "Sacred Fire Intimacy",
@@ -75,65 +78,12 @@ function JsonLd({ article, faqHtml }: { article: ArticleMeta; faqHtml: string })
   );
 }
 
-function TableOfContents({ html }: { html: string }) {
-  const [open, setOpen] = useState(true);
-  const headings = useMemo(() => {
-    const regex = /<h2[^>]*id="([^"]*)"[^>]*>(.*?)<\/h2>/gi;
-    const items: { id: string; text: string }[] = [];
-    let match;
-    while ((match = regex.exec(html)) !== null) {
-      items.push({ id: match[1], text: match[2].replace(/<[^>]+>/g, '') });
-    }
-    if (items.length === 0) {
-      const h2Regex = /<h2[^>]*>(.*?)<\/h2>/gi;
-      while ((match = h2Regex.exec(html)) !== null) {
-        const text = match[1].replace(/<[^>]+>/g, '');
-        const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        items.push({ id, text });
-      }
-    }
-    return items;
-  }, [html]);
-
-  if (headings.length === 0) return null;
-
-  return (
-    <nav className="mb-10 border-l-2 border-[oklch(0.72_0.16_60)] pl-6 py-2">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.40_0.04_35)] mb-3"
-      >
-        In This Article
-        {open ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-      </button>
-      {open && (
-        <ol className="space-y-2">
-          {headings.map((h, i) => (
-            <li key={i}>
-              <a
-                href={`#${h.id}`}
-                className="text-sm text-[oklch(0.40_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200 leading-snug block"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById(h.id)?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                {h.text}
-              </a>
-            </li>
-          ))}
-        </ol>
-      )}
-    </nav>
-  );
-}
-
 function ShareButtons({ article }: { article: ArticleMeta }) {
   const [copied, setCopied] = useState(false);
   const url = `https://consciousex.love/articles/${article.slug}`;
 
   return (
-    <div className="flex items-center gap-3 py-8 border-t border-b border-[oklch(0.90_0.03_60)]">
+    <div className="flex items-center gap-3">
       <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.50_0.04_35)]">Share</span>
       <button
         onClick={() => {
@@ -151,7 +101,7 @@ function ShareButtons({ article }: { article: ArticleMeta }) {
         href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(article.title)}`}
         target="_blank"
         rel="nofollow noopener"
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] hover:text-[oklch(0.55_0.18_25)] transition-all duration-200"
+        className="px-3 py-1.5 text-xs font-medium border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] hover:text-[oklch(0.55_0.18_25)] transition-all duration-200"
       >
         𝕏
       </a>
@@ -159,89 +109,11 @@ function ShareButtons({ article }: { article: ArticleMeta }) {
         href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
         target="_blank"
         rel="nofollow noopener"
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] hover:text-[oklch(0.55_0.18_25)] transition-all duration-200"
+        className="px-3 py-1.5 text-xs font-medium border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] hover:text-[oklch(0.55_0.18_25)] transition-all duration-200"
       >
         Facebook
       </a>
     </div>
-  );
-}
-
-function Sidebar({ article }: { article: ArticleMeta }) {
-  const sameCat = getArticlesByCategory(article.categorySlug).filter((a) => a.slug !== article.slug).slice(0, 4);
-  const popular = filterPublished()
-    .filter((a) => a.slug !== article.slug && !sameCat.find((s) => s.slug === a.slug))
-    .slice(0, 5);
-
-  return (
-    <aside className="space-y-10">
-      {/* Krishna Bio */}
-      <div className="border-l-2 border-[oklch(0.72_0.16_60)] pl-6 sticky top-24">
-        <div className="mb-4">
-          <Flame className="w-6 h-6 text-[oklch(0.55_0.18_25)] mb-3" />
-          <h3 className="font-bold text-[oklch(0.20_0.04_35)] text-lg" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-            Krishna
-          </h3>
-          <p className="text-xs text-[oklch(0.50_0.04_35)] mt-0.5">Mystic &amp; Spiritual Advisor</p>
-        </div>
-        <p className="text-sm text-[oklch(0.40_0.04_35)] leading-relaxed mb-5">
-          {SITE_CONFIG.authorBio}
-        </p>
-        <a
-          href="https://shrikrishna.com"
-          className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors duration-200"
-        >
-          Visit Krishna <ArrowRight className="w-3 h-3" />
-        </a>
-      </div>
-
-      {/* Same Category */}
-      {sameCat.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.50_0.04_35)] mb-5">
-            More in {article.categoryName}
-          </h4>
-          <div className="space-y-5">
-            {sameCat.map((a) => (
-              <Link key={a.slug} href={`/articles/${a.slug}`} className="group flex gap-4">
-                <img src={a.heroImage} alt={a.title} width={80} height={50} loading="lazy" className="w-20 h-14 object-cover flex-shrink-0" />
-                <h5 className="text-sm font-medium text-[oklch(0.30_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200 leading-snug line-clamp-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-                  {a.title}
-                </h5>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Popular */}
-      {popular.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.50_0.04_35)] mb-5">
-            Popular
-          </h4>
-          <div className="space-y-5">
-            {popular.map((a) => (
-              <Link key={a.slug} href={`/articles/${a.slug}`} className="group flex gap-4">
-                <img src={a.heroImage} alt={a.title} width={80} height={50} loading="lazy" className="w-20 h-14 object-cover flex-shrink-0" />
-                <h5 className="text-sm font-medium text-[oklch(0.30_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200 leading-snug line-clamp-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-                  {a.title}
-                </h5>
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Email Capture */}
-      <div className="border-l-2 border-[oklch(0.72_0.16_60)] pl-6">
-        <h4 className="text-sm font-bold text-[oklch(0.20_0.04_35)] mb-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-          Stay in the Fire
-        </h4>
-        <p className="text-xs text-[oklch(0.50_0.04_35)] mb-4">Join the community. No spam.</p>
-        <EmailCapture source={`article-${article.slug}`} />
-      </div>
-    </aside>
   );
 }
 
@@ -257,10 +129,16 @@ function addIdsToH2s(html: string): string {
 export default function ArticlePage() {
   const params = useParams<{ slug: string }>();
   const article = getArticleMetaBySlug(params.slug || "");
-  const related = article ? getRelatedArticles(article, 6) : [];
   const [contentHtml, setContentHtml] = useState("");
   const [faqHtml, setFaqHtml] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Cross-links: 3 title-only links from same category
+  const crossLinks = article
+    ? getArticlesByCategory(article.categorySlug)
+        .filter((a) => a.slug !== article.slug)
+        .slice(0, 3)
+    : [];
 
   useEffect(() => {
     if (article) {
@@ -309,7 +187,7 @@ export default function ArticlePage() {
 
   if (!article) {
     return (
-      <div className="container py-20 text-center">
+      <div className="max-w-[720px] mx-auto px-6 md:px-8 py-20 text-center">
         <h1 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>Article Not Found</h1>
         <Link href="/articles" className="text-[oklch(0.55_0.18_25)] underline">Browse all articles</Link>
       </div>
@@ -331,116 +209,133 @@ export default function ArticlePage() {
           height={675}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.97_0.015_80)] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.98_0.008_80)] via-transparent to-transparent" />
       </div>
 
-      <div className="container -mt-16 relative z-10 pb-12">
-        <div className="flex flex-col lg:flex-row gap-16">
-          {/* Main content */}
-          <div className="lg:w-[68%]">
-            {/* Breadcrumb */}
-            <nav className="flex items-center gap-2 text-xs text-[oklch(0.50_0.04_35)] mb-5">
-              <Link href="/" className="hover:text-[oklch(0.55_0.18_25)] transition-colors">Home</Link>
-              <span className="text-[oklch(0.72_0.16_60)]">/</span>
-              <Link href={`/category/${article.categorySlug}`} className="hover:text-[oklch(0.55_0.18_25)] transition-colors">
-                {article.categoryName}
-              </Link>
-            </nav>
+      {/* Single column — 720px max */}
+      <div className="max-w-[720px] mx-auto px-6 md:px-8 -mt-12 relative z-10 pb-16">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-xs text-[oklch(0.50_0.04_35)] mb-5">
+          <Link href="/" className="hover:text-[oklch(0.55_0.18_25)] transition-colors">Home</Link>
+          <span className="text-[oklch(0.72_0.16_60)]">/</span>
+          <Link href={`/category/${article.categorySlug}`} className="hover:text-[oklch(0.55_0.18_25)] transition-colors">
+            {article.categoryName}
+          </Link>
+        </nav>
 
-            {/* Title */}
-            <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-[oklch(0.20_0.04_35)] leading-[1.1] mb-6"
-              style={{ fontFamily: "'Bodoni Moda', serif" }}
-            >
-              {article.title}
-            </h1>
+        {/* Title below hero */}
+        <h1
+          className="text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-[oklch(0.18_0.04_25)] leading-[1.1] mb-6"
+          style={{ fontFamily: "'Bodoni Moda', serif" }}
+        >
+          {article.title}
+        </h1>
 
-            {/* Meta */}
-            <div className="flex flex-wrap items-center gap-5 mb-8 text-xs text-[oklch(0.50_0.04_35)]">
-              <Link
-                href={`/category/${article.categorySlug}`}
-                className="font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors"
-              >
-                {article.categoryName}
-              </Link>
-              <span>{article.dateHuman}</span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" /> {article.readingTime} min
-              </span>
-            </div>
+        {/* Meta line */}
+        <div className="flex flex-wrap items-center gap-5 mb-8 text-xs text-[oklch(0.50_0.04_35)]">
+          <Link
+            href={`/category/${article.categorySlug}`}
+            className="font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors"
+          >
+            {article.categoryName}
+          </Link>
+          <span>{article.dateHuman}</span>
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" /> {article.readingTime} min
+          </span>
+        </div>
 
-            <div className="ember-line mb-10" />
+        {/* Ember divider */}
+        <div className="h-[1px] bg-gradient-to-r from-[oklch(0.72_0.16_60)] via-[oklch(0.55_0.18_25)] to-transparent mb-10" />
 
-            {loading ? (
-              <div className="py-20 text-center">
-                <Flame className="w-8 h-8 text-[oklch(0.55_0.18_25)] mx-auto animate-pulse" />
-                <p className="mt-4 text-sm text-[oklch(0.50_0.04_35)]">Loading...</p>
-              </div>
-            ) : (
-              <>
-                <TableOfContents html={processedHtml} />
+        {loading ? (
+          <div className="py-20 text-center">
+            <div className="w-8 h-8 border-2 border-[oklch(0.55_0.18_25)] border-t-transparent rounded-full animate-spin mx-auto" />
+            <p className="mt-4 text-sm text-[oklch(0.50_0.04_35)]">Loading...</p>
+          </div>
+        ) : (
+          <>
+            {/* Article body — min 20px, line-height 1.8, paragraph spacing 1.5em */}
+            <div
+              className="article-body"
+              dangerouslySetInnerHTML={{ __html: processedHtml }}
+            />
+
+            {/* FAQ section */}
+            {faqHtml && article.faqCount > 0 && (
+              <div className="mt-16 pt-10 border-t border-[oklch(0.90_0.03_60)]">
+                <h2
+                  className="text-2xl font-bold text-[oklch(0.35_0.12_15)] mb-8"
+                  style={{ fontFamily: "'Bodoni Moda', serif" }}
+                >
+                  Frequently Asked Questions
+                </h2>
                 <div
                   className="article-body"
-                  dangerouslySetInnerHTML={{ __html: processedHtml }}
+                  dangerouslySetInnerHTML={{ __html: faqHtml }}
                 />
-
-                {faqHtml && article.faqCount > 0 && (
-                  <div className="mt-16 pt-10 border-t border-[oklch(0.90_0.03_60)]">
-                    <h2
-                      className="text-2xl font-bold text-[oklch(0.35_0.12_15)] mb-8"
-                      style={{ fontFamily: "'Bodoni Moda', serif" }}
-                    >
-                      Frequently Asked Questions
-                    </h2>
-                    <div
-                      className="article-body"
-                      dangerouslySetInnerHTML={{ __html: faqHtml }}
-                    />
-                  </div>
-                )}
-              </>
+              </div>
             )}
+          </>
+        )}
 
-            <div className="mt-10">
-              <ShareButtons article={article} />
-            </div>
+        {/* Share buttons — bottom */}
+        <div className="mt-10 py-8 border-t border-b border-[oklch(0.90_0.03_60)]">
+          <ShareButtons article={article} />
+        </div>
 
-            {/* Disclaimer */}
-            <div className="mt-8 py-4 px-6 border-l-2 border-[oklch(0.72_0.16_60)] text-xs text-[oklch(0.50_0.04_35)] italic leading-relaxed">
-              {SITE_CONFIG.disclaimer}
-            </div>
+        {/* Kalesh bio — INLINE, 2 sentences, 40 words max */}
+        <div className="mt-10 py-8 border-b border-[oklch(0.90_0.03_60)]">
+          <p className="text-sm text-[oklch(0.35_0.04_35)] leading-relaxed">
+            <strong className="text-[oklch(0.20_0.04_25)]">{SITE_CONFIG.authorName} — {SITE_CONFIG.authorTitle}.</strong>{" "}
+            {SITE_CONFIG.authorBio}{" "}
+            <a
+              href={SITE_CONFIG.authorLink}
+              target="_blank"
+              rel="noopener"
+              className="text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors underline underline-offset-2"
+            >
+              kalesh.love
+            </a>
+          </p>
+        </div>
 
-            {/* Keep Reading */}
-            {related.length > 0 && (
-              <section className="mt-16">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-8 h-[2px] bg-[oklch(0.72_0.16_60)]" />
-                  <h2
-                    className="text-2xl font-bold text-[oklch(0.20_0.04_35)]"
+        {/* Disclaimer */}
+        <div className="mt-6 text-xs text-[oklch(0.55_0.04_35)] italic leading-relaxed">
+          {SITE_CONFIG.disclaimer}
+        </div>
+
+        {/* Cross-links: "More from [Category]" — 3 title-only links */}
+        {crossLinks.length > 0 && (
+          <section className="mt-12 pt-8 border-t border-[oklch(0.90_0.03_60)]">
+            <h2
+              className="text-xs font-semibold uppercase tracking-[0.35em] text-[oklch(0.50_0.04_35)] mb-6"
+            >
+              More from {article.categoryName}
+            </h2>
+            <div className="space-y-4">
+              {crossLinks.map((a) => (
+                <Link
+                  key={a.slug}
+                  href={`/articles/${a.slug}`}
+                  className="group flex items-center justify-between py-3 border-b border-[oklch(0.92_0.03_60)] hover:border-[oklch(0.55_0.18_25)] transition-colors duration-300"
+                >
+                  <span
+                    className="text-base font-medium text-[oklch(0.25_0.04_25)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300"
                     style={{ fontFamily: "'Bodoni Moda', serif" }}
                   >
-                    Keep Reading
-                  </h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {related.map((a) => (
-                    <Link key={a.slug} href={`/articles/${a.slug}`} className="group block warm-card">
-                      <img src={a.heroImage} alt={a.title} width={400} height={225} loading="lazy" className="w-full aspect-[16/9] object-cover mb-3 group-hover:scale-[1.03] transition-transform duration-500" />
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)]">{a.categoryName}</span>
-                      <h3 className="text-sm font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 mt-1 leading-snug" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-                        {a.title}
-                      </h3>
-                    </Link>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
+                    {a.title}
+                  </span>
+                  <ArrowRight className="w-4 h-4 text-[oklch(0.55_0.18_25)] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex-shrink-0 ml-4" />
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
-          {/* Sidebar */}
-          <div className="lg:w-[32%]">
-            <Sidebar article={article} />
-          </div>
+        {/* Email capture */}
+        <div className="mt-12 pt-8 border-t border-[oklch(0.90_0.03_60)]">
+          <EmailCapture source={`article-${article.slug}`} variant="light" />
         </div>
       </div>
     </>

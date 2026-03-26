@@ -32,7 +32,7 @@ export const allArticles: ArticleMeta[] = rawArticles as ArticleMeta[];
 
 export function filterPublished(): ArticleMeta[] {
   const now = new Date();
-  return allArticles.filter(a => new Date(a.dateISO) <= now);
+  return allArticles.filter(a => a.isLive && new Date(a.dateISO) <= now);
 }
 
 export function getArticleMetaBySlug(slug: string): ArticleMeta | undefined {
@@ -94,15 +94,14 @@ export const SITE_CONFIG = {
   subtitle: "Conscious Sexuality Through Ancient Wisdom",
   tagline: "Your body is a temple. Act like it — together.",
   editorialName: "Sacred Fire Editorial",
-  authorName: "Krishna",
-  authorTitle: "Mystic & Spiritual Advisor",
-  authorBio: "Krishna is a mystic, spiritual advisor, and guide who has spent three decades exploring the intersection of sacred sexuality, Advaita Vedanta, and somatic embodiment. His work bridges ancient wisdom with lived experience.",
-  authorLink: "https://shrikrishna.com",
+  authorName: "Kalesh",
+  authorTitle: "Consciousness Teacher & Writer",
+  authorBio: "Kalesh is a consciousness teacher and writer exploring sacred sexuality, embodied awareness, and the intersection of ancient wisdom with modern science.",
+  authorLink: "https://kalesh.love",
   disclaimer: "This site provides educational content about conscious intimacy and sacred sexuality. It is not therapy. For sexual trauma, consult a licensed somatic or sex therapist.",
   bunnyCdnBase: "https://conscious-sexuality.b-cdn.net",
   bunnyStorageZone: "conscious-sexuality",
   bunnyStorageHost: "ny.storage.bunnycdn.com",
-  bunnyStoragePassword: "b2a80662-8b74-4792-8274d3c20d57-edf7-4de9",
 };
 
 // Quiz data

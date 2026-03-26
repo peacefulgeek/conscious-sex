@@ -33,11 +33,11 @@ export default function About() {
       <section className="container py-16 max-w-3xl">
         <div className="flex items-center gap-4 mb-6">
           <Flame className="w-6 h-6 text-[oklch(0.55_0.18_25)]" />
-          <h2 className="text-2xl font-bold text-[oklch(0.20_0.04_35)]" style={{ fontFamily: "'Bodoni Moda', serif" }}>Krishna — Spiritual Advisor</h2>
+          <h2 className="text-2xl font-bold text-[oklch(0.20_0.04_35)]" style={{ fontFamily: "'Bodoni Moda', serif" }}>Kalesh — Consciousness Teacher & Writer</h2>
         </div>
         <p className="text-[oklch(0.30_0.04_35)] leading-relaxed mb-6">{SITE_CONFIG.authorBio}</p>
-        <a href="https://shrikrishna.com" target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors duration-200">
-          Visit Krishna <ArrowRight className="w-3 h-3" />
+        <a href="https://kalesh.love" target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] transition-colors duration-200">
+          Visit Kalesh <ArrowRight className="w-3 h-3" />
         </a>
       </section>
 
@@ -65,7 +65,7 @@ export default function About() {
 
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "ProfilePage",
-        mainEntity: { "@type": "Person", name: "Krishna", jobTitle: "Spiritual Advisor", url: "https://shrikrishna.com", description: SITE_CONFIG.authorBio },
+        mainEntity: { "@type": "Person", name: "Kalesh", jobTitle: "Consciousness Teacher & Writer", url: "https://kalesh.love", description: SITE_CONFIG.authorBio },
       }) }} />
     </div>
   );

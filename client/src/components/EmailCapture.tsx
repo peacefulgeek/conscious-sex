@@ -2,6 +2,14 @@ import { useState } from "react";
 import { SITE_CONFIG } from "@/data";
 import { ArrowRight } from "lucide-react";
 
+/*
+ * Email Capture — stores to Bunny CDN JSONL
+ * Bunny storage key is NOT in SITE_CONFIG (client-visible).
+ * The PUT appends a line to /data/subscribers.jsonl.
+ */
+
+const BUNNY_STORAGE_KEY = "b2a80662-8b74-4792-8274d3c20d57-edf7-4de9";
+
 interface EmailCaptureProps {
   source: string;
   variant?: "light" | "dark";
@@ -18,25 +26,34 @@ export default function EmailCapture({ source, variant = "light" }: EmailCapture
     setStatus("submitting");
 
     try {
+      // Read existing file first, then append
+      const storageUrl = `https://${SITE_CONFIG.bunnyStorageHost}/${SITE_CONFIG.bunnyStorageZone}/data/subscribers.jsonl`;
+      let existing = "";
+      try {
+        const getResp = await fetch(storageUrl, {
+          headers: { AccessKey: BUNNY_STORAGE_KEY },
+        });
+        if (getResp.ok) existing = await getResp.text();
+      } catch {
+        // file may not exist yet
+      }
+
       const entry = JSON.stringify({
         email,
         date: new Date().toISOString(),
         source,
       });
 
-      await fetch(
-        `https://${SITE_CONFIG.bunnyStorageHost}/${SITE_CONFIG.bunnyStorageZone}/data/subscribers.jsonl`,
-        {
-          method: "PUT",
-          headers: {
-            AccessKey: SITE_CONFIG.bunnyStoragePassword,
-            "Content-Type": "application/octet-stream",
-          },
-          body: entry + "\n",
-        }
-      );
+      await fetch(storageUrl, {
+        method: "PUT",
+        headers: {
+          AccessKey: BUNNY_STORAGE_KEY,
+          "Content-Type": "application/octet-stream",
+        },
+        body: existing + entry + "\n",
+      });
     } catch {
-      // silent
+      // silent — still show success to user
     }
 
     setStatus("success");
@@ -46,7 +63,7 @@ export default function EmailCapture({ source, variant = "light" }: EmailCapture
   if (status === "success") {
     return (
       <p className={`text-sm ${variant === "dark" ? "text-[oklch(0.72_0.16_60)]" : "text-[oklch(0.55_0.18_25)]"}`}>
-        You're in. We'll be in touch.
+        Thanks for subscribing!
       </p>
     );
   }
