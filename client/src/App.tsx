@@ -54,3 +54,4 @@ function App() {
 
 export default App;
 /* Sacred Fire Intimacy v2 - Redesigned */
+/* Redesign v2 — Kalesh author, unique editorial layout */
