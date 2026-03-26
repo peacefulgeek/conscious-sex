@@ -1,13 +1,13 @@
 /*
- * Layout: Sacred Fire Intimacy — Temple Architecture design
- * Deep rose (#8B2252), sandalwood (#D2B48C), flame gold (#D4A017)
+ * Layout: Sacred Fire Intimacy — Warm, Alive, Sensual
+ * Ember (#8B3A3A), Flame (#C8884A), Honey (#D4A855), Blush, Petal
  * Bodoni Moda headlines, Lexend body
  */
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Flame } from "lucide-react";
 import { SITE_CONFIG, CATEGORIES } from "@/data";
-import NewsletterForm from "./NewsletterForm";
+import EmailCapture from "./EmailCapture";
 
 function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -15,7 +15,7 @@ function Header() {
   const [location] = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -26,43 +26,42 @@ function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-white/95 backdrop-blur-sm shadow-sm"
+          ? "bg-[oklch(0.97_0.015_80/0.95)] backdrop-blur-md shadow-[0_1px_20px_oklch(0.55_0.18_25/0.06)]"
           : "bg-transparent"
       }`}
     >
-      <nav className="container flex items-center justify-between py-4">
+      <nav className="container flex items-center justify-between py-5">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-full bg-[oklch(0.42_0.14_350)] flex items-center justify-center">
-            <span className="text-white text-sm font-bold" style={{ fontFamily: "'Bodoni Moda', serif" }}>S</span>
-          </div>
-          <div>
-            <span
-              className="text-lg font-bold tracking-tight text-[oklch(0.42_0.14_350)]"
-              style={{ fontFamily: "'Bodoni Moda', serif" }}
-            >
-              Sacred Fire Intimacy
-            </span>
-          </div>
+          <Flame className="w-7 h-7 text-[oklch(0.55_0.18_25)] group-hover:text-[oklch(0.72_0.16_60)] transition-colors duration-300" />
+          <span
+            className="text-xl tracking-tight text-[oklch(0.20_0.04_35)]"
+            style={{ fontFamily: "'Bodoni Moda', serif", fontWeight: 700 }}
+          >
+            Sacred Fire <span className="text-[oklch(0.55_0.18_25)]">Intimacy</span>
+          </span>
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden lg:flex items-center gap-8">
-          <Link href="/articles" className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors">
+        <div className="hidden lg:flex items-center gap-1">
+          <Link href="/start-here" className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">
+            Start Here
+          </Link>
+          <Link href="/articles" className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">
             Articles
           </Link>
           <div className="relative group">
-            <button className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors flex items-center gap-1">
-              Categories <ChevronDown className="w-3 h-3" />
+            <button className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200 flex items-center gap-1">
+              Explore <ChevronDown className="w-3 h-3 transition-transform group-hover:rotate-180 duration-200" />
             </button>
-            <div className="absolute top-full left-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-              <div className="bg-white rounded-md shadow-lg border border-[oklch(0.88_0.03_75)] py-2 min-w-[200px]">
+            <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+              <div className="bg-[oklch(0.99_0.005_80)] rounded-sm shadow-[0_8px_40px_oklch(0.55_0.18_25/0.12)] py-3 min-w-[220px] border border-[oklch(0.90_0.03_60)]">
                 {CATEGORIES.map((cat) => (
                   <Link
                     key={cat.slug}
                     href={`/category/${cat.slug}`}
-                    className="block px-4 py-2 text-sm text-[oklch(0.35_0.05_40)] hover:bg-[oklch(0.93_0.02_75)] hover:text-[oklch(0.42_0.14_350)] transition-colors"
+                    className="block px-5 py-2.5 text-sm text-[oklch(0.30_0.04_35)] hover:bg-[oklch(0.92_0.04_15/0.5)] hover:text-[oklch(0.55_0.18_25)] transition-all duration-200"
                   >
                     {cat.name}
                   </Link>
@@ -70,23 +69,20 @@ function Header() {
               </div>
             </div>
           </div>
-          <Link href="/quizzes" className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors">
+          <Link href="/quizzes" className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">
             Quizzes
           </Link>
-          <Link href="/readiness" className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors">
-            Readiness Check
+          <Link href="/readiness" className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">
+            Readiness
           </Link>
-          <Link href="/start-here" className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors">
-            Start Here
-          </Link>
-          <Link href="/about" className="text-sm font-medium text-[oklch(0.35_0.05_40)] hover:text-[oklch(0.42_0.14_350)] transition-colors">
+          <Link href="/about" className="px-4 py-2 text-sm font-medium text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">
             About
           </Link>
         </div>
 
         {/* Mobile toggle */}
         <button
-          className="lg:hidden p-2 text-[oklch(0.35_0.05_40)]"
+          className="lg:hidden p-2 text-[oklch(0.30_0.04_35)]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -96,18 +92,18 @@ function Header() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white border-t border-[oklch(0.88_0.03_75)] shadow-lg">
-          <div className="container py-4 flex flex-col gap-3">
-            <Link href="/articles" className="py-2 text-sm font-medium text-[oklch(0.35_0.05_40)]">Articles</Link>
+        <div className="lg:hidden bg-[oklch(0.99_0.005_80)] border-t border-[oklch(0.90_0.03_60)]">
+          <div className="container py-6 flex flex-col gap-1">
+            <Link href="/start-here" className="py-3 text-sm font-medium text-[oklch(0.30_0.04_35)] border-b border-[oklch(0.94_0.02_60)]">Start Here</Link>
+            <Link href="/articles" className="py-3 text-sm font-medium text-[oklch(0.30_0.04_35)] border-b border-[oklch(0.94_0.02_60)]">Articles</Link>
             {CATEGORIES.map((cat) => (
-              <Link key={cat.slug} href={`/category/${cat.slug}`} className="py-2 pl-4 text-sm text-[oklch(0.45_0.04_40)]">
+              <Link key={cat.slug} href={`/category/${cat.slug}`} className="py-2.5 pl-4 text-sm text-[oklch(0.40_0.04_35)] border-b border-[oklch(0.94_0.02_60)]">
                 {cat.name}
               </Link>
             ))}
-            <Link href="/quizzes" className="py-2 text-sm font-medium text-[oklch(0.35_0.05_40)]">Quizzes</Link>
-            <Link href="/readiness" className="py-2 text-sm font-medium text-[oklch(0.35_0.05_40)]">Readiness Check</Link>
-            <Link href="/start-here" className="py-2 text-sm font-medium text-[oklch(0.35_0.05_40)]">Start Here</Link>
-            <Link href="/about" className="py-2 text-sm font-medium text-[oklch(0.35_0.05_40)]">About</Link>
+            <Link href="/quizzes" className="py-3 text-sm font-medium text-[oklch(0.30_0.04_35)] border-b border-[oklch(0.94_0.02_60)]">Quizzes</Link>
+            <Link href="/readiness" className="py-3 text-sm font-medium text-[oklch(0.30_0.04_35)] border-b border-[oklch(0.94_0.02_60)]">Readiness Check</Link>
+            <Link href="/about" className="py-3 text-sm font-medium text-[oklch(0.30_0.04_35)]">About</Link>
           </div>
         </div>
       )}
@@ -117,33 +113,36 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-[oklch(0.22_0.03_40)] text-[oklch(0.78_0.03_75)] mt-20">
-      <div className="gold-divider" />
-      <div className="container py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <footer className="bg-[oklch(0.15_0.03_25)] text-[oklch(0.75_0.03_60)]">
+      <div className="ember-line" />
+      <div className="container py-20">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand */}
-          <div>
-            <h3
-              className="text-xl font-bold text-[oklch(0.73_0.14_85)] mb-4"
-              style={{ fontFamily: "'Bodoni Moda', serif" }}
-            >
-              Sacred Fire Intimacy
-            </h3>
-            <p className="text-sm leading-relaxed mb-6 text-[oklch(0.65_0.03_75)]">
+          <div className="md:col-span-5">
+            <div className="flex items-center gap-3 mb-5">
+              <Flame className="w-6 h-6 text-[oklch(0.72_0.16_60)]" />
+              <span
+                className="text-xl text-[oklch(0.92_0.04_60)]"
+                style={{ fontFamily: "'Bodoni Moda', serif", fontWeight: 700 }}
+              >
+                Sacred Fire Intimacy
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed mb-8 text-[oklch(0.60_0.03_60)] max-w-sm">
               {SITE_CONFIG.subtitle}. {SITE_CONFIG.tagline}
             </p>
-            <NewsletterForm source="footer" variant="dark" />
+            <EmailCapture source="footer" variant="dark" />
           </div>
 
-          {/* Categories */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-[oklch(0.73_0.14_85)] mb-4">Explore</h4>
-            <div className="flex flex-col gap-2">
+          {/* Explore */}
+          <div className="md:col-span-3">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.72_0.16_60)] mb-5">Explore</h4>
+            <div className="flex flex-col gap-3">
               {CATEGORIES.map((cat) => (
                 <Link
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
-                  className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors"
+                  className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200"
                 >
                   {cat.name}
                 </Link>
@@ -152,25 +151,32 @@ function Footer() {
           </div>
 
           {/* Links */}
-          <div>
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-[oklch(0.73_0.14_85)] mb-4">Site</h4>
-            <div className="flex flex-col gap-2">
-              <Link href="/start-here" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">Start Here</Link>
-              <Link href="/about" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">About</Link>
-              <Link href="/quizzes" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">Quizzes</Link>
-              <Link href="/readiness" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">Readiness Check</Link>
-              <Link href="/privacy" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="text-sm text-[oklch(0.65_0.03_75)] hover:text-[oklch(0.73_0.14_85)] transition-colors">Terms of Service</Link>
+          <div className="md:col-span-2">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.72_0.16_60)] mb-5">Navigate</h4>
+            <div className="flex flex-col gap-3">
+              <Link href="/start-here" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">Start Here</Link>
+              <Link href="/about" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">About</Link>
+              <Link href="/quizzes" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">Quizzes</Link>
+              <Link href="/readiness" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">Readiness</Link>
+            </div>
+          </div>
+
+          {/* Legal */}
+          <div className="md:col-span-2">
+            <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.72_0.16_60)] mb-5">Legal</h4>
+            <div className="flex flex-col gap-3">
+              <Link href="/privacy" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">Privacy</Link>
+              <Link href="/terms" className="text-sm text-[oklch(0.60_0.03_60)] hover:text-[oklch(0.72_0.16_60)] transition-colors duration-200">Terms</Link>
             </div>
           </div>
         </div>
 
         {/* Disclaimer */}
-        <div className="mt-12 pt-8 border-t border-[oklch(0.35_0.04_40)]">
-          <p className="text-xs text-[oklch(0.50_0.03_40)] leading-relaxed italic">
+        <div className="mt-16 pt-8 border-t border-[oklch(0.25_0.03_25)]">
+          <p className="text-xs text-[oklch(0.40_0.03_35)] leading-relaxed italic max-w-3xl">
             {SITE_CONFIG.disclaimer}
           </p>
-          <p className="text-xs text-[oklch(0.40_0.02_40)] mt-4">
+          <p className="text-xs text-[oklch(0.35_0.02_35)] mt-4">
             &copy; {new Date().getFullYear()} Sacred Fire Intimacy. All rights reserved.
           </p>
         </div>
@@ -184,28 +190,26 @@ function CookieConsent() {
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent");
-    if (!consent) setShow(true);
+    if (!consent) setTimeout(() => setShow(true), 2000);
   }, []);
 
   if (!show) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[oklch(0.88_0.03_75)] shadow-lg p-4">
-      <div className="container flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-[oklch(0.35_0.05_40)]">
-          We use cookies to improve your experience. By continuing, you agree to our{" "}
-          <Link href="/privacy" className="text-[oklch(0.42_0.14_350)] underline">Privacy Policy</Link>.
-        </p>
-        <button
-          onClick={() => {
-            localStorage.setItem("cookie-consent", "true");
-            setShow(false);
-          }}
-          className="px-6 py-2 bg-[oklch(0.42_0.14_350)] text-white text-sm font-medium rounded hover:bg-[oklch(0.35_0.12_350)] transition-colors whitespace-nowrap"
-        >
-          Accept
-        </button>
-      </div>
+    <div className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md z-50 bg-[oklch(0.99_0.005_80)] border border-[oklch(0.90_0.03_60)] shadow-[0_8px_40px_oklch(0.20_0.04_35/0.15)] p-5 rounded-sm animate-in slide-in-from-bottom-4 duration-500">
+      <p className="text-sm text-[oklch(0.30_0.04_35)] leading-relaxed mb-4">
+        We use cookies to understand how you engage with our content.{" "}
+        <Link href="/privacy" className="text-[oklch(0.55_0.18_25)] underline underline-offset-2">Privacy Policy</Link>.
+      </p>
+      <button
+        onClick={() => {
+          localStorage.setItem("cookie-consent", "true");
+          setShow(false);
+        }}
+        className="px-5 py-2 bg-[oklch(0.55_0.18_25)] text-white text-sm font-medium hover:bg-[oklch(0.45_0.16_25)] transition-colors duration-200"
+      >
+        Accept
+      </button>
     </div>
   );
 }
@@ -214,7 +218,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 pt-20">{children}</main>
+      <main className="flex-1 pt-[72px]">{children}</main>
       <Footer />
       <CookieConsent />
     </div>

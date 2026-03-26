@@ -1,84 +1,267 @@
 /*
- * Home: Sacred Fire Intimacy — Magazine-style homepage
- * Hero article, category sections, CTA, newsletter
+ * Home: Sacred Fire Intimacy — Joyful, Sensual, Spiritually Alive
+ * Full-bleed hero with generated art, asymmetric layouts, warm tones
  */
 import { Link } from "wouter";
-import { ArrowRight, Clock } from "lucide-react";
+import { ArrowRight, Clock, Flame } from "lucide-react";
 import { getRecentArticles, getArticlesByCategory, CATEGORIES, SITE_CONFIG, type ArticleMeta } from "@/data";
-import NewsletterForm from "@/components/NewsletterForm";
+import EmailCapture from "@/components/EmailCapture";
 
-function ArticleCard({ article, featured = false }: { article: ArticleMeta; featured?: boolean }) {
+function HeroSection() {
+  return (
+    <section className="relative min-h-[90vh] flex items-end overflow-hidden">
+      {/* Background image */}
+      <div className="absolute inset-0">
+        <img
+          src="https://conscious-sexuality.b-cdn.net/site/hero-main.webp"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[oklch(0.12_0.04_25)] via-[oklch(0.12_0.04_25/0.4)] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[oklch(0.12_0.04_25/0.6)] to-transparent" />
+      </div>
+
+      <div className="relative container pb-20 md:pb-28 pt-40">
+        <div className="max-w-2xl">
+          <div className="flex items-center gap-3 mb-6">
+            <Flame className="w-5 h-5 text-[oklch(0.72_0.16_60)]" />
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[oklch(0.72_0.16_60)]">
+              {SITE_CONFIG.subtitle}
+            </span>
+          </div>
+          <h1
+            className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[0.95] mb-8"
+            style={{ fontFamily: "'Bodoni Moda', serif" }}
+          >
+            Your body<br />
+            is a temple.<br />
+            <span className="text-[oklch(0.72_0.16_60)] italic">Act like it.</span>
+          </h1>
+          <p className="text-lg md:text-xl text-[oklch(0.80_0.03_60)] max-w-lg mb-10 leading-relaxed font-light">
+            Conscious sexuality through ancient wisdom, somatic embodiment, and the courage to be fully alive in your body — together.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link
+              href="/start-here"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-[oklch(0.55_0.18_25)] text-white font-medium hover:bg-[oklch(0.45_0.16_25)] transition-all duration-300 text-sm tracking-wide uppercase"
+            >
+              Begin Your Journey <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              href="/articles"
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 border border-[oklch(0.72_0.16_60/0.5)] text-[oklch(0.72_0.16_60)] font-medium hover:bg-[oklch(0.72_0.16_60/0.1)] transition-all duration-300 text-sm tracking-wide uppercase"
+            >
+              Explore Articles
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturedArticle({ article }: { article: ArticleMeta }) {
   return (
     <Link href={`/articles/${article.slug}`} className="group block">
-      <article className={featured ? "grid md:grid-cols-2 gap-6 items-center" : ""}>
-        <div className={`overflow-hidden rounded ${featured ? "aspect-[16/10]" : "aspect-[16/9] mb-4"}`}>
+      <div className="grid md:grid-cols-5 gap-0 overflow-hidden bg-[oklch(0.99_0.005_80)]">
+        <div className="md:col-span-3 overflow-hidden">
           <img
             src={article.heroImage}
             alt={article.title}
             width={1200}
             height={675}
-            loading={featured ? undefined : "lazy"}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full min-h-[300px] object-cover group-hover:scale-[1.03] transition-transform duration-700"
           />
         </div>
-        <div className={featured ? "py-4" : ""}>
-          <div className="flex items-center gap-3 mb-2">
-            <Link
-              href={`/category/${article.categorySlug}`}
-              className="text-xs font-semibold uppercase tracking-wider text-[oklch(0.42_0.14_350)] hover:text-[oklch(0.73_0.14_85)] transition-colors"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {article.categoryName}
-            </Link>
-            <span className="text-xs text-[oklch(0.55_0.03_40)]">·</span>
-            <span className="text-xs text-[oklch(0.55_0.03_40)] flex items-center gap-1">
-              <Clock className="w-3 h-3" /> {article.readingTime} min
-            </span>
-          </div>
+        <div className="md:col-span-2 p-8 md:p-12 flex flex-col justify-center">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)] mb-4">
+            Featured
+          </span>
           <h2
-            className={`font-bold text-[oklch(0.22_0.03_40)] group-hover:text-[oklch(0.42_0.14_350)] transition-colors ${
-              featured ? "text-3xl md:text-4xl leading-tight" : "text-xl leading-snug"
-            }`}
+            className="text-2xl md:text-3xl font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 leading-tight mb-4"
             style={{ fontFamily: "'Bodoni Moda', serif" }}
           >
             {article.title}
           </h2>
-          <p className={`mt-2 text-[oklch(0.45_0.04_40)] leading-relaxed ${featured ? "text-base" : "text-sm line-clamp-2"}`}>
+          <p className="text-[oklch(0.40_0.04_35)] leading-relaxed mb-6 text-sm">
             {article.metaDescription}
           </p>
-          {featured && (
-            <div className="mt-4 flex items-center gap-2 text-sm font-medium text-[oklch(0.42_0.14_350)]">
-              Read Article <ArrowRight className="w-4 h-4" />
-            </div>
-          )}
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-[oklch(0.50_0.04_35)] flex items-center gap-1">
+              <Clock className="w-3 h-3" /> {article.readingTime} min
+            </span>
+            <span className="text-xs text-[oklch(0.50_0.04_35)]">{article.categoryName}</span>
+          </div>
         </div>
-      </article>
+      </div>
     </Link>
   );
 }
 
-function CategorySection({ category, articles }: { category: typeof CATEGORIES[0]; articles: ArticleMeta[] }) {
-  if (articles.length === 0) return null;
+function ArticleCard({ article, size = "normal" }: { article: ArticleMeta; size?: "normal" | "large" }) {
   return (
-    <section className="mb-16">
-      <div className="flex items-center justify-between mb-8">
+    <Link href={`/articles/${article.slug}`} className="group block warm-card">
+      <div className="overflow-hidden mb-4">
+        <img
+          src={article.heroImage}
+          alt={article.title}
+          width={600}
+          height={338}
+          loading="lazy"
+          className={`w-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ${
+            size === "large" ? "aspect-[4/3]" : "aspect-[16/9]"
+          }`}
+        />
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)]">
+          {article.categoryName}
+        </span>
+        <span className="w-1 h-1 rounded-full bg-[oklch(0.72_0.16_60)]" />
+        <span className="text-[10px] text-[oklch(0.50_0.04_35)] flex items-center gap-1">
+          <Clock className="w-2.5 h-2.5" /> {article.readingTime} min
+        </span>
+      </div>
+      <h3
+        className={`font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 leading-snug ${
+          size === "large" ? "text-xl md:text-2xl" : "text-lg"
+        }`}
+        style={{ fontFamily: "'Bodoni Moda', serif" }}
+      >
+        {article.title}
+      </h3>
+      {size === "large" && (
+        <p className="mt-2 text-sm text-[oklch(0.40_0.04_35)] leading-relaxed line-clamp-2">
+          {article.metaDescription}
+        </p>
+      )}
+    </Link>
+  );
+}
+
+function CategoryRiver({ category, articles }: { category: typeof CATEGORIES[0]; articles: ArticleMeta[] }) {
+  if (articles.length === 0) return null;
+  const lead = articles[0];
+  const rest = articles.slice(1, 4);
+
+  return (
+    <section className="py-16">
+      <div className="container">
+        <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-[2px] bg-[oklch(0.72_0.16_60)]" />
+            <h2
+              className="text-2xl md:text-3xl font-bold text-[oklch(0.20_0.04_35)]"
+              style={{ fontFamily: "'Bodoni Moda', serif" }}
+            >
+              {category.name}
+            </h2>
+          </div>
+          <Link
+            href={`/category/${category.slug}`}
+            className="text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.18_25)] hover:text-[oklch(0.35_0.12_15)] flex items-center gap-2 transition-colors duration-200"
+          >
+            View All <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+          <div className="md:col-span-6">
+            <ArticleCard article={lead} size="large" />
+          </div>
+          <div className="md:col-span-6 flex flex-col gap-6">
+            {rest.map((art) => (
+              <Link key={art.slug} href={`/articles/${art.slug}`} className="group flex gap-5 items-start warm-card">
+                <img
+                  src={art.heroImage}
+                  alt={art.title}
+                  width={160}
+                  height={100}
+                  loading="lazy"
+                  className="w-32 h-20 object-cover flex-shrink-0 group-hover:scale-[1.03] transition-transform duration-500"
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)] mb-1 block">
+                    {art.categoryName}
+                  </span>
+                  <h4
+                    className="text-sm font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 leading-snug line-clamp-2"
+                    style={{ fontFamily: "'Bodoni Moda', serif" }}
+                  >
+                    {art.title}
+                  </h4>
+                  <span className="text-[10px] text-[oklch(0.50_0.04_35)] mt-1 block">{art.readingTime} min read</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EmailCaptureSection() {
+  return (
+    <section className="relative py-24 overflow-hidden">
+      <div className="absolute inset-0">
+        <img
+          src="https://conscious-sexuality.b-cdn.net/site/hero-connection.webp"
+          alt=""
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[oklch(0.12_0.04_25/0.85)]" />
+      </div>
+      <div className="relative container text-center max-w-xl mx-auto">
+        <Flame className="w-8 h-8 text-[oklch(0.72_0.16_60)] mx-auto mb-6" />
         <h2
-          className="text-2xl font-bold text-[oklch(0.22_0.03_40)]"
+          className="text-3xl md:text-4xl font-bold text-white mb-4"
           style={{ fontFamily: "'Bodoni Moda', serif" }}
         >
-          {category.name}
+          Stay in the Fire
         </h2>
-        <Link
-          href={`/category/${category.slug}`}
-          className="text-sm font-medium text-[oklch(0.42_0.14_350)] hover:text-[oklch(0.73_0.14_85)] flex items-center gap-1 transition-colors"
-        >
-          View All <ArrowRight className="w-3 h-3" />
-        </Link>
+        <p className="text-[oklch(0.75_0.03_60)] mb-8 leading-relaxed">
+          Join a community of people doing the real work of conscious intimacy. No spam. Just signal.
+        </p>
+        <div className="max-w-sm mx-auto">
+          <EmailCapture source="homepage-cta" variant="dark" />
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {articles.slice(0, 3).map((art) => (
-          <ArticleCard key={art.slug} article={art} />
-        ))}
+    </section>
+  );
+}
+
+function QuizTeaser() {
+  return (
+    <section className="py-20 bg-[oklch(0.92_0.04_15)]">
+      <div className="container">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-[0.3em] text-[oklch(0.55_0.18_25)] mb-4 block">Interactive</span>
+            <h2
+              className="text-3xl md:text-4xl font-bold text-[oklch(0.20_0.04_35)] mb-6 leading-tight"
+              style={{ fontFamily: "'Bodoni Moda', serif" }}
+            >
+              What does your<br />intimacy reveal<br />about you?
+            </h2>
+            <p className="text-[oklch(0.40_0.04_35)] leading-relaxed mb-8 max-w-md">
+              Nine quizzes designed to illuminate your patterns, desires, and edges. Not personality tests — mirrors.
+            </p>
+            <Link
+              href="/quizzes"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-[oklch(0.55_0.18_25)] text-white font-medium hover:bg-[oklch(0.45_0.16_25)] transition-all duration-300 text-sm tracking-wide uppercase"
+            >
+              Take a Quiz <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="relative">
+            <img
+              src="https://conscious-sexuality.b-cdn.net/site/hero-energy.webp"
+              alt="Sacred energy"
+              className="w-full aspect-[4/5] object-cover"
+            />
+            <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-[oklch(0.92_0.04_15)] to-transparent" />
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -87,116 +270,55 @@ function CategorySection({ category, articles }: { category: typeof CATEGORIES[0
 export default function Home() {
   const recent = getRecentArticles(20);
   const heroArticle = recent[0];
-  const secondaryArticles = recent.slice(1, 4);
+  const latestThree = recent.slice(1, 4);
 
   return (
     <div>
-      {/* Hero Section */}
-      <section className="relative bg-[oklch(0.22_0.03_40)] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[oklch(0.22_0.03_40)/80] to-[oklch(0.22_0.03_40)]" />
-        <div className="container relative py-20 md:py-32">
-          <div className="max-w-3xl">
-            <p className="text-[oklch(0.73_0.14_85)] text-sm font-semibold uppercase tracking-[0.2em] mb-4">
-              {SITE_CONFIG.subtitle}
-            </p>
-            <h1
-              className="text-4xl md:text-6xl lg:text-7xl font-bold text-[oklch(0.97_0.01_85)] leading-[1.1] mb-6"
-              style={{ fontFamily: "'Bodoni Moda', serif" }}
-            >
-              Your body is a temple.<br />
-              <span className="text-[oklch(0.73_0.14_85)]">Act like it — together.</span>
-            </h1>
-            <p className="text-lg text-[oklch(0.70_0.03_75)] max-w-xl mb-8 leading-relaxed">
-              Sacred Fire Intimacy explores conscious sexuality through Advaita Vedanta, classical Tantra, and somatic embodiment. Presence transforms physical intimacy.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/start-here"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[oklch(0.42_0.14_350)] text-white font-medium rounded hover:bg-[oklch(0.35_0.12_350)] transition-colors"
-              >
-                Start Here <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/articles"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-[oklch(0.73_0.14_85)] text-[oklch(0.73_0.14_85)] font-medium rounded hover:bg-[oklch(0.73_0.14_85)/10] transition-colors"
-              >
-                Browse Articles
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* Featured Article */}
       {heroArticle && (
         <section className="container py-16">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-[2px] bg-[oklch(0.73_0.14_85)]" />
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.03_40)]">Featured</span>
-          </div>
-          <ArticleCard article={heroArticle} featured />
+          <FeaturedArticle article={heroArticle} />
         </section>
       )}
 
-      {/* Secondary articles */}
-      {secondaryArticles.length > 0 && (
+      {/* Latest Articles */}
+      {latestThree.length > 0 && (
         <section className="container pb-16">
-          <div className="gold-divider mb-12" />
+          <div className="ember-line mb-12" />
+          <div className="flex items-center gap-4 mb-10">
+            <div className="w-8 h-[2px] bg-[oklch(0.72_0.16_60)]" />
+            <h2
+              className="text-2xl font-bold text-[oklch(0.20_0.04_35)]"
+              style={{ fontFamily: "'Bodoni Moda', serif" }}
+            >
+              Latest
+            </h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {secondaryArticles.map((art) => (
+            {latestThree.map((art) => (
               <ArticleCard key={art.slug} article={art} />
             ))}
           </div>
         </section>
       )}
 
-      {/* Newsletter CTA */}
-      <section className="bg-[oklch(0.93_0.02_75)] py-16">
-        <div className="container text-center max-w-xl mx-auto">
-          <h2
-            className="text-3xl font-bold text-[oklch(0.22_0.03_40)] mb-4"
-            style={{ fontFamily: "'Bodoni Moda', serif" }}
-          >
-            Stay Connected
-          </h2>
-          <p className="text-[oklch(0.45_0.04_40)] mb-6">
-            Join our community of conscious lovers exploring sacred intimacy.
-          </p>
-          <NewsletterForm source="homepage" />
-        </div>
-      </section>
+      {/* Email Capture */}
+      <EmailCaptureSection />
 
-      {/* Category Sections */}
-      <div className="container py-16">
-        {CATEGORIES.map((cat) => (
-          <CategorySection
-            key={cat.slug}
-            category={cat}
-            articles={getArticlesByCategory(cat.slug)}
-          />
-        ))}
-      </div>
-
-      {/* Quiz CTA */}
-      <section className="bg-[oklch(0.22_0.03_40)] py-16">
-        <div className="container text-center">
-          <h2
-            className="text-3xl font-bold text-[oklch(0.97_0.01_85)] mb-4"
-            style={{ fontFamily: "'Bodoni Moda', serif" }}
-          >
-            Discover Your Intimate Self
-          </h2>
-          <p className="text-[oklch(0.70_0.03_75)] mb-8 max-w-lg mx-auto">
-            Take one of our 9 quizzes to explore your intimacy style, sexual presence, desire language, and more.
-          </p>
-          <Link
-            href="/quizzes"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[oklch(0.73_0.14_85)] text-[oklch(0.22_0.03_40)] font-medium rounded hover:bg-[oklch(0.68_0.14_85)] transition-colors"
-          >
-            Explore Quizzes <ArrowRight className="w-4 h-4" />
-          </Link>
+      {/* Category Rivers */}
+      {CATEGORIES.map((cat, i) => (
+        <div key={cat.slug}>
+          <CategoryRiver category={cat} articles={getArticlesByCategory(cat.slug)} />
+          {i < CATEGORIES.length - 1 && (
+            <div className="container"><div className="ember-line" /></div>
+          )}
         </div>
-      </section>
+      ))}
+
+      {/* Quiz Teaser */}
+      <QuizTeaser />
     </div>
   );
 }

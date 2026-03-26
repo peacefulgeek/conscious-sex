@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link, useParams } from "wouter";
-import { ArrowRight, ArrowLeft, RotateCcw } from "lucide-react";
+import { ArrowRight, ArrowLeft, RotateCcw, Flame } from "lucide-react";
 import { quizzes, getArticleBySlug, SITE_CONFIG } from "@/data";
-import NewsletterForm from "@/components/NewsletterForm";
+import EmailCapture from "@/components/EmailCapture";
 
 export default function QuizPage() {
   const params = useParams<{ slug: string }>();
@@ -21,7 +21,6 @@ export default function QuizPage() {
     });
     setScores(newScores);
     setAnswers([...answers, optionIndex]);
-
     if (currentQ < quiz.questions.length - 1) {
       setCurrentQ(currentQ + 1);
     } else {
@@ -29,7 +28,6 @@ export default function QuizPage() {
     }
   }, [quiz, currentQ, scores, answers]);
 
-  // Keyboard navigation
   useEffect(() => {
     if (showResult || !quiz) return;
     const handler = (e: KeyboardEvent) => {
@@ -46,7 +44,7 @@ export default function QuizPage() {
     return (
       <div className="container py-20 text-center">
         <h1 className="text-3xl font-bold mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>Quiz Not Found</h1>
-        <Link href="/quizzes" className="text-[oklch(0.42_0.14_350)] underline">Browse all quizzes</Link>
+        <Link href="/quizzes" className="text-[oklch(0.55_0.18_25)] underline">Browse all quizzes</Link>
       </div>
     );
   }
@@ -62,52 +60,48 @@ export default function QuizPage() {
 
   if (showResult) {
     const result = getResult();
-    const recommendedArticles = result.recommendations
-      .map(slug => getArticleBySlug(slug))
-      .filter(Boolean);
+    const recommendedArticles = result.recommendations.map(slug => getArticleBySlug(slug)).filter(Boolean);
 
     return (
-      <div className="container py-12 max-w-2xl mx-auto">
-        <div className="text-center mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[oklch(0.42_0.14_350)] mb-2">Your Result</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-[oklch(0.22_0.03_40)] mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+      <div className="container py-16 max-w-2xl mx-auto">
+        <div className="text-center mb-10">
+          <Flame className="w-8 h-8 text-[oklch(0.72_0.16_60)] mx-auto mb-4" />
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[oklch(0.55_0.18_25)] mb-3">Your Result</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-[oklch(0.20_0.04_35)] mb-6" style={{ fontFamily: "'Bodoni Moda', serif" }}>
             {result.title}
           </h1>
-          <div className="gold-divider mb-6" />
-          <p className="text-lg text-[oklch(0.35_0.05_40)] leading-relaxed">{result.description}</p>
+          <div className="ember-line mb-6" />
+          <p className="text-lg text-[oklch(0.35_0.04_35)] leading-relaxed">{result.description}</p>
         </div>
 
-        {/* Recommended articles */}
         {recommendedArticles.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-bold text-[oklch(0.22_0.03_40)] mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>Recommended Reading</h2>
-            <div className="space-y-3">
+          <section className="mb-10">
+            <h2 className="text-lg font-bold text-[oklch(0.20_0.04_35)] mb-5" style={{ fontFamily: "'Bodoni Moda', serif" }}>Recommended Reading</h2>
+            <div className="space-y-4">
               {recommendedArticles.map(a => a && (
-                <Link key={a.slug} href={`/articles/${a.slug}`} className="group flex items-center gap-3 p-3 rounded border border-[oklch(0.88_0.03_75)] hover:border-[oklch(0.42_0.14_350)] transition-colors">
-                  <img src={a.heroImage} alt={a.title} width={60} height={34} loading="lazy" className="w-15 h-9 object-cover rounded" />
-                  <span className="text-sm font-medium text-[oklch(0.35_0.05_40)] group-hover:text-[oklch(0.42_0.14_350)] transition-colors">{a.title}</span>
+                <Link key={a.slug} href={`/articles/${a.slug}`} className="group flex items-center gap-4 py-3 border-b border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] transition-colors">
+                  <img src={a.heroImage} alt={a.title} width={80} height={45} loading="lazy" className="w-20 h-12 object-cover flex-shrink-0" />
+                  <span className="text-sm font-medium text-[oklch(0.30_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors">{a.title}</span>
                 </Link>
               ))}
             </div>
           </section>
         )}
 
-        {/* Newsletter */}
-        <div className="bg-[oklch(0.95_0.01_85)] rounded p-6 mb-8">
-          <h3 className="text-lg font-bold text-[oklch(0.22_0.03_40)] mb-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>Stay Connected</h3>
-          <p className="text-sm text-[oklch(0.55_0.03_40)] mb-3">Join our community for more insights on conscious intimacy.</p>
-          <NewsletterForm source={`quiz-${quiz.slug}`} />
+        <div className="border-l-2 border-[oklch(0.72_0.16_60)] pl-6 mb-10">
+          <h3 className="text-sm font-bold text-[oklch(0.20_0.04_35)] mb-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>Stay in the Fire</h3>
+          <p className="text-xs text-[oklch(0.50_0.04_35)] mb-4">Join the community. No spam.</p>
+          <EmailCapture source={`quiz-${quiz.slug}`} />
         </div>
 
-        {/* Share & retake */}
         <div className="flex gap-4 justify-center">
           <button
             onClick={() => { setCurrentQ(0); setAnswers([]); setScores({}); setShowResult(false); }}
-            className="flex items-center gap-2 px-4 py-2 text-sm border border-[oklch(0.88_0.03_75)] rounded hover:bg-[oklch(0.93_0.02_75)] transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 text-sm border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] transition-colors"
           >
-            <RotateCcw className="w-4 h-4" /> Retake Quiz
+            <RotateCcw className="w-4 h-4" /> Retake
           </button>
-          <Link href="/quizzes" className="flex items-center gap-2 px-4 py-2 text-sm bg-[oklch(0.42_0.14_350)] text-white rounded hover:bg-[oklch(0.35_0.12_350)] transition-colors">
+          <Link href="/quizzes" className="flex items-center gap-2 px-5 py-2.5 text-sm bg-[oklch(0.55_0.18_25)] text-white hover:bg-[oklch(0.45_0.16_25)] transition-colors">
             More Quizzes <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -116,55 +110,49 @@ export default function QuizPage() {
   }
 
   const question = quiz.questions[currentQ];
-  const progress = ((currentQ) / quiz.questions.length) * 100;
+  const progress = (currentQ / quiz.questions.length) * 100;
 
   return (
-    <div className="container py-12 max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <Link href="/quizzes" className="text-sm text-[oklch(0.55_0.03_40)] hover:text-[oklch(0.42_0.14_350)] flex items-center gap-1 mb-4">
-          <ArrowLeft className="w-3 h-3" /> All Quizzes
-        </Link>
-        <h1 className="text-2xl md:text-3xl font-bold text-[oklch(0.22_0.03_40)]" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-          {quiz.title}
-        </h1>
-      </div>
+    <div className="container py-16 max-w-2xl mx-auto">
+      <Link href="/quizzes" className="text-xs text-[oklch(0.50_0.04_35)] hover:text-[oklch(0.55_0.18_25)] flex items-center gap-1 mb-8">
+        <ArrowLeft className="w-3 h-3" /> All Quizzes
+      </Link>
+      <h1 className="text-2xl font-bold text-[oklch(0.20_0.04_35)] mb-8" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+        {quiz.title}
+      </h1>
 
-      {/* Progress bar */}
-      <div className="mb-8">
-        <div className="flex justify-between text-xs text-[oklch(0.55_0.03_40)] mb-2">
+      {/* Progress */}
+      <div className="mb-10">
+        <div className="flex justify-between text-xs text-[oklch(0.50_0.04_35)] mb-2">
           <span>Question {currentQ + 1} of {quiz.questions.length}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-1.5 bg-[oklch(0.93_0.02_75)] rounded-full overflow-hidden">
-          <div className="h-full bg-[oklch(0.42_0.14_350)] rounded-full transition-all duration-300" style={{ width: `${progress}%` }} />
+        <div className="h-[2px] bg-[oklch(0.90_0.03_60)] overflow-hidden">
+          <div className="h-full bg-[oklch(0.55_0.18_25)] transition-all duration-500" style={{ width: `${progress}%` }} />
         </div>
       </div>
 
       {/* Question */}
-      <div className="mb-8">
-        <h2 className="text-xl font-bold text-[oklch(0.22_0.03_40)] mb-6" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-          {question.text}
-        </h2>
-        <div className="space-y-3">
-          {question.options.map((opt, i) => (
-            <button
-              key={i}
-              onClick={() => handleAnswer(i)}
-              className="w-full text-left p-4 rounded border border-[oklch(0.88_0.03_75)] hover:border-[oklch(0.42_0.14_350)] hover:bg-[oklch(0.97_0.01_85)] transition-all group"
-            >
-              <div className="flex items-start gap-3">
-                <span className="w-6 h-6 rounded-full border border-[oklch(0.88_0.03_75)] group-hover:border-[oklch(0.42_0.14_350)] flex items-center justify-center text-xs font-medium text-[oklch(0.55_0.03_40)] group-hover:text-[oklch(0.42_0.14_350)] flex-shrink-0 mt-0.5">
-                  {i + 1}
-                </span>
-                <span className="text-sm text-[oklch(0.35_0.05_40)]">{opt.text}</span>
-              </div>
-            </button>
-          ))}
-        </div>
+      <h2 className="text-xl font-bold text-[oklch(0.20_0.04_35)] mb-8 leading-snug" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+        {question.text}
+      </h2>
+      <div className="space-y-3">
+        {question.options.map((opt, i) => (
+          <button
+            key={i}
+            onClick={() => handleAnswer(i)}
+            className="w-full text-left p-5 border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] hover:bg-[oklch(0.94_0.02_60)] transition-all duration-200 group"
+          >
+            <div className="flex items-start gap-4">
+              <span className="w-7 h-7 border border-[oklch(0.90_0.03_60)] group-hover:border-[oklch(0.55_0.18_25)] flex items-center justify-center text-xs font-medium text-[oklch(0.50_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] flex-shrink-0 mt-0.5 transition-colors">
+                {i + 1}
+              </span>
+              <span className="text-sm text-[oklch(0.30_0.04_35)]">{opt.text}</span>
+            </div>
+          </button>
+        ))}
       </div>
-
-      <p className="text-xs text-[oklch(0.55_0.03_40)] text-center">Press 1-{question.options.length} on your keyboard to select</p>
+      <p className="text-[10px] text-[oklch(0.50_0.04_35)] text-center mt-6">Press 1-{question.options.length} to select</p>
     </div>
   );
 }

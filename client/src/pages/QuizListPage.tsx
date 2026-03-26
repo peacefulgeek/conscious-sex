@@ -1,55 +1,64 @@
 import { Link } from "wouter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import { quizzes, CATEGORIES } from "@/data";
 
 export default function QuizListPage() {
   return (
-    <div className="container py-12">
-      <div className="max-w-3xl mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold text-[oklch(0.22_0.03_40)] mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-          Quizzes
-        </h1>
-        <p className="text-lg text-[oklch(0.45_0.04_40)]">
-          Explore your intimate self through honest self-assessment. Each quiz takes 2-5 minutes and offers personalized insights.
-        </p>
-      </div>
+    <div>
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 flame-glow" />
+        <div className="container relative max-w-2xl">
+          <Flame className="w-6 h-6 text-[oklch(0.72_0.16_60)] mb-4" />
+          <h1 className="text-4xl md:text-5xl font-bold text-[oklch(0.20_0.04_35)] mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+            Quizzes
+          </h1>
+          <p className="text-[oklch(0.40_0.04_35)] text-lg">
+            Nine mirrors. Not personality tests — honest self-assessments that illuminate your patterns, desires, and edges.
+          </p>
+        </div>
+      </section>
+      <div className="ember-line" />
 
-      <div className="gold-divider mb-12" />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {quizzes.map(quiz => {
-          const cat = CATEGORIES.find(c => c.slug === quiz.category);
-          return (
-            <Link key={quiz.slug} href={`/quiz/${quiz.slug}`} className="group block p-6 rounded border border-[oklch(0.88_0.03_75)] hover:border-[oklch(0.42_0.14_350)] hover:shadow-md transition-all">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[oklch(0.42_0.14_350)]">
-                  {cat?.name || "Quiz"}
+      <section className="container py-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {quizzes.map(quiz => {
+            const cat = CATEGORIES.find(c => c.slug === quiz.category);
+            return (
+              <Link key={quiz.slug} href={`/quiz/${quiz.slug}`} className="group block p-8 border-l-2 border-[oklch(0.72_0.16_60)] hover:bg-[oklch(0.94_0.02_60)] transition-all duration-300 warm-card">
+                <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)] mb-3 block">
+                  {cat?.name || "Quiz"} · {quiz.questions.length} questions
                 </span>
-                <span className="text-xs text-[oklch(0.55_0.03_40)]">· {quiz.questions.length} questions</span>
-              </div>
-              <h2 className="text-xl font-bold text-[oklch(0.22_0.03_40)] group-hover:text-[oklch(0.42_0.14_350)] transition-colors mb-2" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-                {quiz.title}
-              </h2>
-              <p className="text-sm text-[oklch(0.45_0.04_40)] mb-4 line-clamp-2">{quiz.description}</p>
-              <span className="text-sm font-medium text-[oklch(0.42_0.14_350)] flex items-center gap-1">
-                Take Quiz <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-              </span>
-            </Link>
-          );
-        })}
-      </div>
+                <h2 className="text-xl font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 mb-3 leading-snug" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+                  {quiz.title}
+                </h2>
+                <p className="text-sm text-[oklch(0.40_0.04_35)] leading-relaxed mb-5 line-clamp-2">{quiz.description}</p>
+                <span className="text-xs font-semibold uppercase tracking-[0.15em] text-[oklch(0.55_0.18_25)] flex items-center gap-2">
+                  Take Quiz <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-200" />
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Readiness Check CTA */}
-      <section className="mt-16 bg-[oklch(0.22_0.03_40)] rounded-lg p-8 md:p-12 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-[oklch(0.97_0.01_85)] mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>
-          The Intimacy Readiness Check
-        </h2>
-        <p className="text-[oklch(0.70_0.03_75)] mb-6 max-w-lg mx-auto">
-          A deeper assessment: 12 questions on vulnerability, sensation, presence, and unresolved shame. Discover your archetype.
-        </p>
-        <Link href="/readiness" className="inline-flex items-center gap-2 px-6 py-3 bg-[oklch(0.73_0.14_85)] text-[oklch(0.22_0.03_40)] font-medium rounded hover:bg-[oklch(0.68_0.14_85)] transition-colors">
-          Take the Readiness Check <ArrowRight className="w-4 h-4" />
-        </Link>
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src="https://conscious-sexuality.b-cdn.net/site/hero-energy.webp" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[oklch(0.12_0.04_25/0.85)]" />
+        </div>
+        <div className="container relative text-center max-w-lg">
+          <Flame className="w-8 h-8 text-[oklch(0.72_0.16_60)] mx-auto mb-4" />
+          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4" style={{ fontFamily: "'Bodoni Moda', serif" }}>
+            The Intimacy Readiness Check
+          </h2>
+          <p className="text-[oklch(0.75_0.03_60)] mb-8">
+            A deeper assessment: 12 questions on vulnerability, sensation, presence, and unresolved shame. Discover your archetype.
+          </p>
+          <Link href="/readiness" className="inline-flex items-center gap-3 px-8 py-4 bg-[oklch(0.55_0.18_25)] text-white font-medium hover:bg-[oklch(0.45_0.16_25)] transition-all duration-300 text-sm tracking-wide uppercase">
+            Take the Readiness Check <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
       </section>
     </div>
   );

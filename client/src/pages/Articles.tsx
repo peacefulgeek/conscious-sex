@@ -1,191 +1,182 @@
 /*
- * Articles: Magazine layout with category filter, search, pagination
+ * Articles: Browse all — warm, alive design
  */
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { Search, Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { filterPublished, CATEGORIES, type ArticleMeta } from "@/data";
 
-const ARTICLES_PER_PAGE = 12;
+const PER_PAGE = 12;
 
 function ArticleCard({ article }: { article: ArticleMeta }) {
   return (
-    <Link href={`/articles/${article.slug}`} className="group block">
-      <article>
-        <div className="overflow-hidden rounded aspect-[16/9] mb-4">
-          <img
-            src={article.heroImage}
-            alt={article.title}
-            width={600}
-            height={338}
-            loading="lazy"
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        </div>
-        <div className="flex items-center gap-3 mb-2">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[oklch(0.42_0.14_350)]">
-            {article.categoryName}
-          </span>
-          <span className="text-xs text-[oklch(0.55_0.03_40)]">·</span>
-          <span className="text-xs text-[oklch(0.55_0.03_40)] flex items-center gap-1">
-            <Clock className="w-3 h-3" /> {article.readingTime} min
-          </span>
-        </div>
-        <h2
-          className="text-lg font-bold text-[oklch(0.22_0.03_40)] group-hover:text-[oklch(0.42_0.14_350)] transition-colors leading-snug"
-          style={{ fontFamily: "'Bodoni Moda', serif" }}
-        >
-          {article.title}
-        </h2>
-        <p className="mt-2 text-sm text-[oklch(0.45_0.04_40)] line-clamp-2">
-          {article.metaDescription}
-        </p>
-      </article>
+    <Link href={`/articles/${article.slug}`} className="group block warm-card">
+      <div className="overflow-hidden mb-4">
+        <img
+          src={article.heroImage}
+          alt={article.title}
+          width={600}
+          height={338}
+          loading="lazy"
+          className="w-full aspect-[16/9] object-cover group-hover:scale-[1.04] transition-transform duration-700"
+        />
+      </div>
+      <div className="flex items-center gap-3 mb-2">
+        <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[oklch(0.55_0.18_25)]">
+          {article.categoryName}
+        </span>
+        <span className="w-1 h-1 rounded-full bg-[oklch(0.72_0.16_60)]" />
+        <span className="text-[10px] text-[oklch(0.50_0.04_35)] flex items-center gap-1">
+          <Clock className="w-2.5 h-2.5" /> {article.readingTime} min
+        </span>
+      </div>
+      <h3
+        className="text-lg font-bold text-[oklch(0.20_0.04_35)] group-hover:text-[oklch(0.55_0.18_25)] transition-colors duration-300 leading-snug"
+        style={{ fontFamily: "'Bodoni Moda', serif" }}
+      >
+        {article.title}
+      </h3>
+      <p className="mt-2 text-sm text-[oklch(0.40_0.04_35)] leading-relaxed line-clamp-2">
+        {article.metaDescription}
+      </p>
     </Link>
   );
 }
 
 export default function Articles() {
-  const [search, setSearch] = useState("");
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const allArticles = useMemo(() => filterPublished(), []);
+  const [query, setQuery] = useState("");
+  const [activeCat, setActiveCat] = useState("");
   const [page, setPage] = useState(1);
 
-  const published = useMemo(() => filterPublished(), []);
-  const articleCount = published.length;
-
   const filtered = useMemo(() => {
-    let arts = published;
-    if (activeCategory) {
-      arts = arts.filter((a) => a.categorySlug === activeCategory);
-    }
-    if (search) {
-      const q = search.toLowerCase();
-      arts = arts.filter(
+    let list = allArticles;
+    if (activeCat) list = list.filter((a) => a.categorySlug === activeCat);
+    if (query.trim()) {
+      const q = query.toLowerCase();
+      list = list.filter(
         (a) =>
           a.title.toLowerCase().includes(q) ||
           a.metaDescription.toLowerCase().includes(q) ||
-          a.metaKeywords.toLowerCase().includes(q)
+          (a.metaKeywords && a.metaKeywords.toLowerCase().includes(q))
       );
     }
-    return arts.sort((a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime());
-  }, [published, activeCategory, search]);
+    return list.sort((a, b) => new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime());
+  }, [allArticles, query, activeCat]);
 
-  const totalPages = Math.ceil(filtered.length / ARTICLES_PER_PAGE);
-  const paginated = filtered.slice((page - 1) * ARTICLES_PER_PAGE, page * ARTICLES_PER_PAGE);
+  const totalPages = Math.ceil(filtered.length / PER_PAGE);
+  const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
-    <div className="container py-12">
+    <div>
       {/* Header */}
-      <div className="mb-12">
-        <h1
-          className="text-4xl md:text-5xl font-bold text-[oklch(0.22_0.03_40)] mb-2"
-          style={{ fontFamily: "'Bodoni Moda', serif" }}
-        >
-          Articles
-        </h1>
-        <p className="text-[oklch(0.45_0.04_40)]">
-          {articleCount} articles on conscious sexuality, sacred intimacy, and embodied practice.
-        </p>
-      </div>
-
-      {/* Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[oklch(0.55_0.03_40)]" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            placeholder="Search articles..."
-            className="w-full pl-10 pr-4 py-2.5 text-sm border border-[oklch(0.88_0.03_75)] rounded bg-white text-[oklch(0.22_0.03_40)] placeholder:text-[oklch(0.55_0.03_40)]"
-          />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => { setActiveCategory(null); setPage(1); }}
-            className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
-              !activeCategory
-                ? "bg-[oklch(0.42_0.14_350)] text-white"
-                : "bg-[oklch(0.93_0.02_75)] text-[oklch(0.45_0.04_40)] hover:bg-[oklch(0.88_0.03_75)]"
-            }`}
+      <section className="relative py-20 overflow-hidden">
+        <div className="absolute inset-0 flame-glow" />
+        <div className="container relative">
+          <h1
+            className="text-4xl md:text-5xl font-bold text-[oklch(0.20_0.04_35)] mb-4"
+            style={{ fontFamily: "'Bodoni Moda', serif" }}
           >
-            All
-          </button>
-          {CATEGORIES.map((cat) => (
+            All Articles
+          </h1>
+          <p className="text-[oklch(0.40_0.04_35)] max-w-lg mb-8">
+            {filtered.length} articles on conscious sexuality, sacred intimacy, and embodied presence.
+          </p>
+
+          {/* Search */}
+          <div className="relative max-w-md mb-8">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[oklch(0.50_0.04_35)]" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => { setQuery(e.target.value); setPage(1); }}
+              placeholder="Search articles..."
+              className="w-full pl-11 pr-4 py-3 text-sm bg-white border border-[oklch(0.90_0.03_60)] focus:border-[oklch(0.55_0.18_25)] focus:outline-none transition-colors"
+            />
+          </div>
+
+          {/* Category filters */}
+          <div className="flex flex-wrap gap-2">
             <button
-              key={cat.slug}
-              onClick={() => { setActiveCategory(cat.slug); setPage(1); }}
-              className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
-                activeCategory === cat.slug
-                  ? "bg-[oklch(0.42_0.14_350)] text-white"
-                  : "bg-[oklch(0.93_0.02_75)] text-[oklch(0.45_0.04_40)] hover:bg-[oklch(0.88_0.03_75)]"
+              onClick={() => { setActiveCat(""); setPage(1); }}
+              className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-200 ${
+                !activeCat
+                  ? "bg-[oklch(0.55_0.18_25)] text-white"
+                  : "bg-transparent text-[oklch(0.40_0.04_35)] border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)]"
               }`}
             >
-              {cat.name}
+              All
             </button>
-          ))}
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.slug}
+                onClick={() => { setActiveCat(cat.slug); setPage(1); }}
+                className={`px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] transition-all duration-200 ${
+                  activeCat === cat.slug
+                    ? "bg-[oklch(0.55_0.18_25)] text-white"
+                    : "bg-transparent text-[oklch(0.40_0.04_35)] border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)]"
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
 
-      {/* Results */}
-      {paginated.length > 0 ? (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            {paginated.map((art) => (
+      <div className="ember-line" />
+
+      {/* Grid */}
+      <section className="container py-12">
+        {paged.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-[oklch(0.50_0.04_35)]">No articles found. Try a different search.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {paged.map((art) => (
               <ArticleCard key={art.slug} article={art} />
             ))}
           </div>
+        )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                onClick={() => setPage(Math.max(1, page - 1))}
-                disabled={page === 1}
-                className="p-2 rounded border border-[oklch(0.88_0.03_75)] disabled:opacity-30 hover:bg-[oklch(0.93_0.02_75)] transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                let pageNum: number;
-                if (totalPages <= 7) {
-                  pageNum = i + 1;
-                } else if (page <= 4) {
-                  pageNum = i + 1;
-                } else if (page >= totalPages - 3) {
-                  pageNum = totalPages - 6 + i;
-                } else {
-                  pageNum = page - 3 + i;
-                }
-                return (
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-16">
+            <button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="p-2 border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] disabled:opacity-30 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1)
+              .filter((p) => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+              .map((p, idx, arr) => (
+                <span key={p}>
+                  {idx > 0 && arr[idx - 1] !== p - 1 && <span className="text-[oklch(0.50_0.04_35)] px-1">...</span>}
                   <button
-                    key={pageNum}
-                    onClick={() => setPage(pageNum)}
-                    className={`w-9 h-9 text-sm rounded transition-colors ${
-                      page === pageNum
-                        ? "bg-[oklch(0.42_0.14_350)] text-white"
-                        : "border border-[oklch(0.88_0.03_75)] hover:bg-[oklch(0.93_0.02_75)]"
+                    onClick={() => setPage(p)}
+                    className={`w-9 h-9 text-sm font-medium transition-all duration-200 ${
+                      p === page
+                        ? "bg-[oklch(0.55_0.18_25)] text-white"
+                        : "text-[oklch(0.40_0.04_35)] hover:text-[oklch(0.55_0.18_25)]"
                     }`}
                   >
-                    {pageNum}
+                    {p}
                   </button>
-                );
-              })}
-              <button
-                onClick={() => setPage(Math.min(totalPages, page + 1))}
-                disabled={page === totalPages}
-                className="p-2 rounded border border-[oklch(0.88_0.03_75)] disabled:opacity-30 hover:bg-[oklch(0.93_0.02_75)] transition-colors"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="text-center py-20">
-          <p className="text-[oklch(0.55_0.03_40)]">No articles found matching your search.</p>
-        </div>
-      )}
+                </span>
+              ))}
+            <button
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+              className="p-2 border border-[oklch(0.90_0.03_60)] hover:border-[oklch(0.55_0.18_25)] disabled:opacity-30 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </section>
     </div>
   );
 }
