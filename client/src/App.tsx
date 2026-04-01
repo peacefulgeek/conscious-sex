@@ -13,6 +13,8 @@ import About from "./pages/About";
 import QuizPage from "./pages/QuizPage";
 import QuizListPage from "./pages/QuizListPage";
 import ReadinessPage from "./pages/ReadinessPage";
+import ToolsPage from "./pages/ToolsPage";
+import AssessmentsPage from "./pages/AssessmentsPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
@@ -29,7 +31,9 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/quizzes" component={QuizListPage} />
         <Route path="/quiz/:slug" component={QuizPage} />
+        <Route path="/assessments" component={AssessmentsPage} />
         <Route path="/readiness" component={ReadinessPage} />
+        <Route path="/tools" component={ToolsPage} />
         <Route path="/privacy" component={PrivacyPolicy} />
         <Route path="/terms" component={TermsOfService} />
         <Route path="/404" component={NotFound} />
@@ -53,5 +57,3 @@ function App() {
 }
 
 export default App;
-/* Sacred Fire Intimacy v2 - Redesigned */
-/* Redesign v2 — Kalesh author, unique editorial layout */

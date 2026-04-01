@@ -1,13 +1,20 @@
 /*
  * Layout: Sacred Fire Intimacy
- * Render Template: Minimal nav — site name left, "Articles" + "About" right
- * Minimal footer — privacy, terms, email one-liner
- * NO hamburger menu on mobile
+ * Nav: site name left, Articles + Tools + Quizzes + About right
+ * Footer: Amazon Associate disclosure, privacy, terms
  */
 import { useState, useEffect, type ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { SITE_CONFIG } from "@/data";
 import EmailCapture from "./EmailCapture";
+
+const NAV_LINKS = [
+  { href: "/articles", label: "Articles", match: (l: string) => l.startsWith("/articles") || l.startsWith("/category") || l.startsWith("/article/") },
+  { href: "/tools", label: "Tools", match: (l: string) => l === "/tools" },
+  { href: "/quizzes", label: "Quizzes", match: (l: string) => l.startsWith("/quiz") },
+  { href: "/assessments", label: "Assessments", match: (l: string) => l.startsWith("/assess") },
+  { href: "/about", label: "About", match: (l: string) => l === "/about" },
+];
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -27,9 +34,8 @@ function Header() {
           : "bg-transparent"
       }`}
     >
-      <nav className="max-w-4xl mx-auto px-6 md:px-8 flex items-center justify-between py-5">
-        {/* Site name — text only, no icon */}
-        <Link href="/" className="group">
+      <nav className="max-w-5xl mx-auto px-4 md:px-8 flex items-center justify-between py-4">
+        <Link href="/" className="group shrink-0">
           <span
             className="text-lg tracking-tight text-[oklch(0.20_0.04_35)]"
             style={{ fontFamily: "'Bodoni Moda', serif", fontWeight: 700 }}
@@ -38,28 +44,20 @@ function Header() {
           </span>
         </Link>
 
-        {/* Right nav — Articles + About only, always visible */}
-        <div className="flex items-center gap-6">
-          <Link
-            href="/articles"
-            className={`text-sm font-medium transition-colors duration-200 ${
-              location.startsWith("/articles") || location.startsWith("/category")
-                ? "text-[oklch(0.55_0.18_25)]"
-                : "text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)]"
-            }`}
-          >
-            Articles
-          </Link>
-          <Link
-            href="/about"
-            className={`text-sm font-medium transition-colors duration-200 ${
-              location === "/about"
-                ? "text-[oklch(0.55_0.18_25)]"
-                : "text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)]"
-            }`}
-          >
-            About
-          </Link>
+        <div className="flex items-center gap-3 md:gap-5 flex-wrap justify-end">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`text-xs md:text-sm font-medium transition-colors duration-200 ${
+                link.match(location)
+                  ? "text-[oklch(0.55_0.18_25)]"
+                  : "text-[oklch(0.30_0.04_35)] hover:text-[oklch(0.55_0.18_25)]"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
       </nav>
     </header>
@@ -71,13 +69,16 @@ function Footer() {
     <footer className="border-t border-[oklch(0.88_0.03_60)]">
       <div className="max-w-4xl mx-auto px-6 md:px-8 py-12">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
-          {/* Left — email capture one-liner */}
           <div className="max-w-sm">
             <EmailCapture source="footer" variant="light" />
           </div>
 
-          {/* Right — minimal links */}
-          <div className="flex items-center gap-6 text-sm text-[oklch(0.50_0.04_35)]">
+          <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-[oklch(0.50_0.04_35)]">
+            <Link href="/articles" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Articles</Link>
+            <Link href="/tools" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Tools</Link>
+            <Link href="/quizzes" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Quizzes</Link>
+            <Link href="/assessments" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Assessments</Link>
+            <Link href="/about" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">About</Link>
             <Link href="/privacy" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Privacy</Link>
             <Link href="/terms" className="hover:text-[oklch(0.55_0.18_25)] transition-colors duration-200">Terms</Link>
           </div>
@@ -87,7 +88,10 @@ function Footer() {
           <p className="text-xs text-[oklch(0.55_0.04_35)] leading-relaxed italic">
             {SITE_CONFIG.disclaimer}
           </p>
-          <p className="text-xs text-[oklch(0.60_0.03_35)] mt-3">
+          <p className="text-xs text-[oklch(0.60_0.03_35)] mt-2">
+            As an Amazon Associate I earn from qualifying purchases.
+          </p>
+          <p className="text-xs text-[oklch(0.60_0.03_35)] mt-2">
             &copy; {new Date().getFullYear()} Sacred Fire Intimacy
           </p>
         </div>
